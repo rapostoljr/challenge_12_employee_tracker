@@ -37,3 +37,6 @@ inquirer.prompt({
         "Exit",
     ]
 })
+.then((answers) => {
+    console.log(answers.user_selection);
+})
