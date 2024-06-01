@@ -38,5 +38,16 @@ inquirer.prompt({
     ]
 })
 .then((answers) => {
-    console.log(answers.user_selection);
-})
+    console.log(`You have chose to "${answers.user_selection}"`);
+    if (answers.user_selection === "View Departments") {
+        viewDepartments();
+    }
+});
+
+function viewDepartments() {
+    const sqlQuery = 'SELECT * FROM department'
+    connection.query(sqlQuery, (err,res) => {
+        if (err) throw err;
+        console.table(res);
+    })
+}
