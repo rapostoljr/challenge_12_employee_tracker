@@ -154,11 +154,13 @@ function addRole() {
                 }))
             },
         ])
-        .then((answer) => {
+        .then((answer) => {            
+            // finds department name that is associated with the selected department ID
+            const selectedDepartment = res.find(department => department.id === answer.newRoleDepartment);
             const newRoleQuery = `INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)`;
             connection.query(newRoleQuery, [answer.newRole, answer.newRoleSalary, answer.newRoleDepartment], (err, res) => {
                 if (err) throw err;
-                console.log(`Successfully added ${answer.newRole} role with a salary of ${answer.newRoleSalary} to the database!`);
+                console.log(`Successfully added ${answer.newRole} role with a salary of ${answer.newRoleSalary} to the ${selectedDepartment.department_name} department to the database!`);
                 continuePrompt();
             });
         });
