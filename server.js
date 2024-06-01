@@ -26,14 +26,14 @@ inquirer.prompt({
         "Add a Department",
         "Add a Role",
         "Add an Employee",
-        "Add a Manager",
         "Update an Employee Role",
-        "View Employees by Manager",
-        "View Employees by Department",
-        "Delete Departments",
-        "Delete Roles",
-        "Delete Employees",
-        "View Total Department Budget",
+        // BONUS, WILL DO IF HAVE TIME
+        // "View Employees by Manager",
+        // "View Employees by Department",
+        // "Delete Departments",
+        // "Delete Roles",
+        // "Delete Employees",
+        // "View Total Department Budget",
         "Exit",
     ]
 })
@@ -42,11 +42,33 @@ inquirer.prompt({
     if (answers.user_selection === "View Departments") {
         viewDepartments();
     }
+    if (answers.user_selection === "View Roles") {
+        viewRoles();
+    }
+    if (answers.user_selection === "View Employees") {
+        viewEmployees();
+    }
 });
 
 function viewDepartments() {
-    const sqlQuery = 'SELECT * FROM department'
-    connection.query(sqlQuery, (err,res) => {
+    const departmentsQuery = 'SELECT * FROM departments'
+    connection.query(departmentsQuery, (err,res) => {
+        if (err) throw err;
+        console.table(res);
+    })
+}
+
+function viewRoles() {
+    const rolesQuery = 'SELECT * FROM roles'
+    connection.query(rolesQuery, (err,res) => {
+        if (err) throw err;
+        console.table(res);
+    })
+}
+
+function viewEmployees() {
+    const employeesQuery = 'SELECT * FROM employees'
+    connection.query(employeesQuery, (err,res) => {
         if (err) throw err;
         console.table(res);
     })
