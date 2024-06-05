@@ -171,11 +171,66 @@ function addEmployee() {
     const rolesQuery = 'SELECT id, title FROM roles'
     connection.query(rolesQuery, (err,res) => {
         if (err) throw err;
-    });
-    const roles = res.map(({ id, title }) => ({
-        name: title,
-        value: id,
+    
+    const roles = res.map( role => ({ 
+        name: role.title,
+        value: role.id
     }));
-}
+
+        const managersQuery = 'SELECT id, CONCAT(first_name, " ", last_name) AS name FROM employees';
+        connection.query(managersQuery, (err,res) => {
+            if (err) throw err;
+
+        const managers = res.map( manager => ({
+            name: manager.name,
+            value: manager.id
+        }));
+
+        inquirer
+            .prompt([
+                {
+                    type: "input",
+                    name: "firstName",
+                    message: "Enter employee's first name:",
+                },
+                {
+                    type: "input",
+                    name: "lastName",
+                    message: "Enter employee's last name:",
+                },
+                {
+                    type: "list",
+                    name: "role",
+                    message: "Enter employee's role:",
+                    choices: roles,
+                },
+                {
+                    type: "list",
+                    name: "manager",
+                    message: "Enter employee's manager:",
+                    choices: [
+                        // creates a choice to have no manager and sets that value to null
+                        { name: "None", value: null },
+                        ...managers
+                    ]
+                }
+            ])
+            .then(answers => {
+                const newEmployeeQuery = `INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`;
+                const employeeValues = [
+                    answers.firstName,
+                    answers.lastName,
+                    answers.role,
+                    answers.manager,
+                ];
+                connection.query(newEmployeeQuery, employeeValues, (err, res) => {
+                    if (err) throw err;
+                    console.log(`Successfully added ${answers.firstName} ${answers.lastName} to the database!`);
+                    continuePrompt();
+                });
+            })
+        });
+    });    
+};
 
 beginPrompt();
