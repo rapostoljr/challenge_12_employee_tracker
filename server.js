@@ -15,6 +15,7 @@ const connection = mysql.createConnection(
     console.log('Connected to database!')
 );
 
+// this is a function to ask user to choose what do they start the application
 function beginPrompt() {
     inquirer.prompt({
         type: "list",
@@ -28,13 +29,6 @@ function beginPrompt() {
             "Add a Role",
             "Add an Employee",
             "Update an Employee Role",
-            // BONUS, WILL DO IF HAVE TIME
-            // "View Employees by Manager",
-            // "View Employees by Department",
-            // "Delete Departments",
-            // "Delete Roles",
-            // "Delete Employees",
-            // "View Total Department Budget",
             "Exit",
         ]
     })
@@ -57,6 +51,9 @@ function beginPrompt() {
         }
         if (answers.user_selection === "Add an Employee") {
             addEmployee();
+        }
+        if (answers.user_selection === "Update an Employee Role") {
+            updateEmployeeRole();
         }
         if (answers.user_selection === "Exit") {
             connection.end();
@@ -82,6 +79,7 @@ function continuePrompt() {
     })
 }
 
+// displays all departments
 function viewDepartments() {
     const departmentsQuery = 'SELECT * FROM departments'
     connection.query(departmentsQuery, (err,res) => {
@@ -91,6 +89,7 @@ function viewDepartments() {
     })
 }
 
+// displays all roles
 function viewRoles() {
     const rolesQuery = 'SELECT * FROM roles'
     connection.query(rolesQuery, (err,res) => {
@@ -100,6 +99,7 @@ function viewRoles() {
     })
 }
 
+// displays all employees
 function viewEmployees() {
     const employeesQuery = 'SELECT * FROM employees'
     connection.query(employeesQuery, (err,res) => {
@@ -109,6 +109,7 @@ function viewEmployees() {
     })
 }
 
+// prompts user to create/add a new department
 function addDepartment() {
     inquirer
     .prompt({
@@ -126,6 +127,7 @@ function addDepartment() {
     });
 }
 
+// prompts user to create/add a new role
 function addRole() {
     // fetches values from departments and stores it as departmentsQuery
     const departmentsQuery = 'SELECT * FROM departments'
@@ -167,6 +169,7 @@ function addRole() {
     });  
 }
 
+// prompts user to create/add a new employee
 function addEmployee() {
     const rolesQuery = 'SELECT id, title FROM roles'
     connection.query(rolesQuery, (err,res) => {
@@ -211,6 +214,7 @@ function addEmployee() {
                     choices: [
                         // creates a choice to have no manager and sets that value to null
                         { name: "None", value: null },
+                        // displays copy of existing managers in managersQuery as choices and returns value
                         ...managers
                     ]
                 }
@@ -231,6 +235,56 @@ function addEmployee() {
             })
         });
     });    
+};
+
+// prompts user to choose an employee that they want to change their role
+function updateEmployeeRole() {
+    const employeesQuery = `SELECT id, CONCAT(first_name, ' ', last_name) AS name FROM employees`;
+    const rolesQuery = 'SELECT id, title FROM roles';
+    connection.query(employeesQuery, (err,resEmployee) => {
+        if (err) throw err;
+
+        const employees = resEmployee.map( employee => ({
+            name: employee.name,
+            value: employee.id
+        }));
+        connection.query(rolesQuery, (err,resRole) => {
+            if (err) throw err;
+
+            const roles = resRole.map(role => ({
+                name: role.title,
+                value: role.id
+            }));
+
+            inquirer
+                .prompt([
+                {
+                    type: "list",
+                    name: "employee",
+                    message: "Which employee would you like to update?",
+                    choices: employees,
+                },
+                {
+                    type: "list",
+                    name: "role",
+                    message: "What is the employee's new role?",
+                    choices: roles,
+                }
+            ])
+            .then((answers) => {
+                // finds employee name that is associated with the selected employee ID
+                const selectedEmployee = resEmployee.find(employee => employee.id === answers.employee);
+                // finds role title that is associated with the selected role ID
+                const selectedRole = resRole.find(role => role.id === answers.role);
+                const updateEmployeeQuery = `UPDATE employees SET role_id =? WHERE id =?`;
+                connection.query(updateEmployeeQuery, [answers.role, answers.employee], (err, res) => {
+                    if (err) throw err;
+                    console.log(`Successfully updated ${selectedEmployee.name}'s role to ${selectedRole.title}!`);
+                    continuePrompt();
+                });                
+            });
+        });
+    });
 };
 
 beginPrompt();
