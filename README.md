@@ -1,9 +1,20 @@
 # CHALLENGE 12 EMPLOYEE TRACKER
 
 ## DESCRIPTION
-
+This is a simple interface that allows you to keep track of a management database. It's easy accessibility makes it great for users to be able to keep their companies employee database organized. You are able to view all departments, employees, and their roles, as well as adding new departments, roles and employees. You are also able to update an employee and their role.
 
 ## HOW TO USE
+To use this application, you will first need to have node installed. Once installed, you can enter your terminal and type 'npm install' to install the dependencies in package.json. After that is done, you will need to log in to your mysql account, type 'mysql -u root -p' (if you have a password you will need to leave '-p', if not you can remove '-p'). After loging in run the schema.sql and the seeds.sql files, by typing 'source db/schema.sql' and 'source db/seeds.sql'. You can now exit mysql, and run the application by typing 'node server.js'. You will then be prompted with the following:
+
+![alt openProgram](./public/images/tracker-start.jpg)
+
+If you choose View Departments, a table will be displayed showing all the departments:
+
+![alt allDepartments](./public/images/departments.jpg)
+
+If you choose employees, a table will be displayed showing all the employees:
+
+![alt allEmployees](./public/images/employees.jpg)
 
 
 ## ACCEPTANCE CRITERIA
@@ -26,5 +37,5 @@ WHEN I choose to update an employee role\
 THEN I am prompted to select an employee to update and their new role and this information is updated in the database
 
 ## VIEWING MY PROJECT
-Link to GitHub: <i> ENTER GITHUB LINK HERE </i>\
+Link to GitHub: <i> https://github.com/rapostoljr/challenge_12_employee_tracker.git </i>\
 Videon link: <i> ENTER VIDEO LINK HERE </i>
