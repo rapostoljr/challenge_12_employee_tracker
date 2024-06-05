@@ -251,39 +251,61 @@ function updateEmployeeRole() {
         connection.query(rolesQuery, (err,resRole) => {
             if (err) throw err;
 
-            const roles = resRole.map(role => ({
-                name: role.title,
-                value: role.id
+        const roles = resRole.map(role => ({
+            name: role.title,
+            value: role.id
             }));
 
-            inquirer
-                .prompt([
-                {
-                    type: "list",
-                    name: "employee",
-                    message: "Which employee would you like to update?",
-                    choices: employees,
-                },
-                {
-                    type: "list",
-                    name: "role",
-                    message: "What is the employee's new role?",
-                    choices: roles,
-                }
-            ])
-            .then((answers) => {
-                // finds employee name that is associated with the selected employee ID
-                const selectedEmployee = resEmployee.find(employee => employee.id === answers.employee);
-                // finds role title that is associated with the selected role ID
-                const selectedRole = resRole.find(role => role.id === answers.role);
-                const updateEmployeeQuery = `UPDATE employees SET role_id =? WHERE id =?`;
-                connection.query(updateEmployeeQuery, [answers.role, answers.employee], (err, res) => {
-                    if (err) throw err;
-                    console.log(`Successfully updated ${selectedEmployee.name}'s role to ${selectedRole.title}!`);
-                    continuePrompt();
-                });                
+            const managersQuery = 'SELECT id, CONCAT(first_name, " ", last_name) AS name FROM employees';
+            connection.query(managersQuery, (err,resManager) => {
+                if (err) throw err;
+
+            const managers = resManager.map( manager => ({
+                name: manager.name,
+                value: manager.id
+            }));
+
+                inquirer
+                    .prompt([
+                    {
+                        type: "list",
+                        name: "employee",
+                        message: "Which employee would you like to update?",
+                        choices: employees,
+                    },
+                    {
+                        type: "list",
+                        name: "role",
+                        message: "What is the employee's new role?",
+                        choices: roles,
+                    },
+                    {
+                        type: "list",
+                        name: "manager",
+                        message: "Who is this employee's manager:",
+                        choices: [
+                            // creates a choice to have no manager and sets that value to null
+                            { name: "None", value: null },
+                            // displays copy of existing managers in managersQuery as choices and returns value
+                            ...managers
+                        ]
+                    }
+                ])
+                .then((answers) => {
+                    // finds employee name that is associated with the selected employee ID
+                    const selectedEmployee = resEmployee.find(employee => employee.id === answers.employee);
+                    // finds role title that is associated with the selected role ID
+                    const selectedRole = resRole.find(role => role.id === answers.role);
+                    const selectedManager = resManager.find(manager => manager.id === answers.manager);
+                    const updateEmployeeQuery = `UPDATE employees SET role_id =?, manager_id=? WHERE id =?`;
+                    connection.query(updateEmployeeQuery, [answers.role, answers.manager, answers.employee], (err, res) => {
+                        if (err) throw err;
+                        console.log(`Successfully updated ${selectedEmployee.name}'s role to ${selectedRole.title} and manager to ${selectedManager.name}!`);
+                        continuePrompt();
+                    });                
+                });
             });
-        });
+        }); 
     });
 };
 

@@ -38,4 +38,4 @@ THEN I am prompted to select an employee to update and their new role and this i
 
 ## VIEWING MY PROJECT
 Link to GitHub: <i> https://github.com/rapostoljr/challenge_12_employee_tracker.git </i>\
-Videon link: <i> ENTER VIDEO LINK HERE </i>
+Videon link: <i> https://drive.google.com/file/d/14ALOkRpDL94f06m-DkK_Wvcy-0dXnZJU/view </i>
