@@ -1,4 +1,15 @@
 {
+  "name": "challenge_12_employee_tracker",
+  "description": "## DESCRIPTION This is a simple interface that allows you to keep track of a management database. It's easy accessibility makes it great for users to be able to keep their companies employee database organized. You are able to view all departments, employees, and their roles, as well as adding new departments, roles and employees. You are also able to update an employee and their role.",
+  "version": "1.0.0",
+  "main": "server.js",
+  "devDependencies": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+  "start": "node server.js"
+  },
   "dependencies": {
     "dotenv": "^16.4.5",
     "inquirer": "^8.2.4",
